@@ -8,7 +8,8 @@ const [size, setSize] = useState({
     width: 800,
     height: 600,
   });
-
+const [history, setHistory] = useState<any[][]>([]);
+const [future, setFuture] = useState<any[][]>([]);
 const [pinColor, setPinColor] = useState("#fcda68");
 const [pins, setPins] = useState<any[]>([]);
 
@@ -37,6 +38,11 @@ const [pins, setPins] = useState<any[]>([]);
     localStorage.setItem("pins", JSON.stringify(pins));
   }, [pins]);
 
+  function saveToHistory(currentPins: any[]) {
+    setHistory([...history, currentPins]);
+    setFuture([]);
+  }
+
   function addPin() {
     setPins([
       ...pins,
@@ -52,8 +58,9 @@ const [pins, setPins] = useState<any[]>([]);
 
   function editPinText(id: number) {
   const newText = prompt("Edit pin text:");
-
   if (!newText) return;
+
+  saveToHistory(pins);
 
   setPins(
     pins.map((pin) =>
@@ -62,28 +69,52 @@ const [pins, setPins] = useState<any[]>([]);
   );
 }
  function updatePinPosition(id: number, x: number, y: number) {
+    saveToHistory(pins);
   setPins(
     pins.map((pin) =>
       pin.id === id ? { ...pin, x, y } : pin
     )
   );
 }
+function undo() {
+    if (history.length === 0) return;
 
+    const previous = history[history.length - 1];
+    setHistory(history.slice(0, history.length - 1));
+    setFuture([pins, ...future]);
+    setPins(previous);
+  }
+
+  // 🔴 ADD: redo function
+  function redo() {
+    if (future.length === 0) return;
+
+    const next = future[0];
+    setFuture(future.slice(1));
+    setHistory([...history, pins]);
+    setPins(next);
+  }
   return (
     <>
       {/* Top controls */}
       <div style={{ padding: "8px", background: "#f0f0f0" }}>
-        <button
+    <button
     onClick={addPin}
     style={{ marginRight: "12px", color:"black" }}
   >Add Pin
   </button>
-        <label style={{ marginRight: "7px", color:"black" }}>Pin colour:</label>
+        <label style={{ marginRight: "10px", color:"black" }}> Pin colour:</label>
         <input
           type="color"
           value={pinColor}
           onChange={(e) => setPinColor(e.target.value)}
         />
+    <button onClick={undo} style={{ marginRight: "8px", marginLeft:"30px", color: "black" }}>
+          Undo
+        </button>
+        <button onClick={redo} style={{ marginRight: "24px", color: "black" }}>
+          Redo
+        </button>
       </div>
 
       {/* Board */}
