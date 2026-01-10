@@ -9,6 +9,8 @@ const [size, setSize] = useState({
     height: 600,
   });
 
+const [pinColor, setPinColor] = useState("#fcda68");
+
   useEffect(() => {
     setSize({
       width: window.innerWidth,
@@ -16,6 +18,18 @@ const [size, setSize] = useState({
     });
   }, []);
   return (
+    <>
+      {/* Top controls */}
+      <div style={{ padding: "8px", background: "#f0f0f0" }}>
+        <label style={{ marginRight: "8px" }}>Pin color:</label>
+        <input
+          type="color"
+          value={pinColor}
+          onChange={(e) => setPinColor(e.target.value)}
+        />
+      </div>
+
+      {/* Board */}
     <Stage width={size.width} height={size.height} style={{ background: "white"}}>
       <Layer>
         <Group draggable>
@@ -24,12 +38,12 @@ const [size, setSize] = useState({
             y={50}
             width={120}
             height={80}
-            fill="#fcda68"
+            fill={pinColor}
             cornerRadius={5}
             shadowBlur={4}           
           />
           <Text
-           x={60}
+            x={60}
             y={60}
             text="first pin"
             fontSize={16}
@@ -39,5 +53,6 @@ const [size, setSize] = useState({
         </Group>
       </Layer>
     </Stage>
+    </>
   );
 }
