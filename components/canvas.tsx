@@ -16,7 +16,7 @@ const [size, setSize] = useState({
     });
   }, []);
   return (
-    <Stage width={size.width} height={size.height}>
+    <Stage width={size.width} height={size.height} style={{ background: "white"}}>
       <Layer>
         <Rect
           x={50}
@@ -24,6 +24,7 @@ const [size, setSize] = useState({
           width={120}
           height={80}
           fill="black"
+          draggable
         />
       </Layer>
     </Stage>
