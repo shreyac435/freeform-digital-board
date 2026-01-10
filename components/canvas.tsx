@@ -107,7 +107,7 @@ function undo() {
   function groupSelectedPins() {
   if (selectedPins.length < 2) return;
 
-  saveToHistory(pins); // keeps undo working
+  saveToHistory(pins); 
 
   const newGroupId = Date.now();
 
@@ -124,38 +124,118 @@ function undo() {
 
   return (
     <>
-      {/* Top controls */}
-      <div style={{ padding: "8px", background: "#f0f0f0" }}>
+    <div
+  style={{
+    height: "48px",
+    background: "#4f7cc4",
+    color: "white",
+    display: "flex",
+    alignItems: "center",
+    padding: "0 16px",
+    fontWeight: "600",
+    letterSpacing: "0.5px",
+  }}
+>
+  PinDump
+</div>
+<div style={{ display: "flex", height: "calc(100vh - 48px)" }}>
+
+      <div
+  style={{
+    position: "absolute",
+    top: "60px",
+    left:"12px",
+    width: "180px",
+    background: "#f7f7f7",
+    padding: "12px",
+    borderRight: "1px solid #ddd",
+    boxShadow: "0 8px 24px #0000001f", 
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
+    zIndex: 10,
+  }}
+>
     <button
     onClick={addPin}
-    style={{ marginRight: "12px", color:"black" }}
+    style={{
+    padding: "8px",
+    borderRadius: "6px",
+    border: "1px solid #4f7cc4",
+    background: "white",
+    cursor: "pointer",
+    color: "#4f7cc4"
+  }}
     >Add Pin
     </button>
-        <label style={{ marginRight: "10px", color:"black" }}> Pin colour:</label>
-        <input
-          type="color"
-          value={pinColor}
-          onChange={(e) => setPinColor(e.target.value)}
-        />
+        <div
+  style={{
+    padding: "8px",
+    borderRadius: "6px",
+    border: "1px solid #4f7cc4",
+    background: "white",
+    color: "#4f7cc4",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+  }}
+>
+  <span>Pin colour</span>
+
+  <input
+    type="color"
+    value={pinColor}
+    onChange={(e) => setPinColor(e.target.value)}
+    style={{
+      border: "none",
+      background: "none",
+      width: "50px",
+      height: "28px",
+      padding: "0",
+      cursor: "pointer",
+    }}
+  />
+</div>
+
     <button
      onClick={groupSelectedPins}
-     style={{ marginRight: "12px", color: "black" }}
+     style={{ padding: "8px",
+    borderRadius: "6px",
+    border: "1px solid #4f7cc4",
+    background: "white",
+    color: "#4f7cc4",
+    cursor: "pointer",
+    textAlign: "center",
+  }}
     >
     Group
     </button>
 
-    <button onClick={undo} style={{ marginRight: "8px", marginLeft:"30px", color: "black" }}>
-          Undo
+    <button onClick={undo} style={{ padding: "8px",
+    borderRadius: "6px",
+    border: "1px solid #4f7cc4",
+    background: "white",
+    color: "#4f7cc4",
+    cursor: "pointer",
+    textAlign: "center",
+  }}> Undo
         </button>
-        <button onClick={redo} style={{ marginRight: "24px", color: "black" }}>
+        <button onClick={redo} style={{ padding: "8px",
+    borderRadius: "6px",
+    border: "1px solid #4f7cc4",
+    background: "white",
+    color: "#4f7cc4",
+    cursor: "pointer",
+    textAlign: "center",
+  }}>
           Redo
         </button>
       </div>
 
       {/* Board */}
-    <Stage width={size.width} 
+    <Stage width={size.width-180} 
     height={size.height-50} 
-    style={{ background: "white"}}>
+    style={{ background: "#fcfcfc"}}>
       <Layer>
         {pins.map((pin) => (
         <Group key={pin.id} 
@@ -203,6 +283,7 @@ function undo() {
         ))}
       </Layer>
     </Stage>
+    </div>
     </>
   );
 }
