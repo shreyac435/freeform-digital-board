@@ -1,6 +1,6 @@
 "use client";
 
-import { Stage, Layer, Rect } from "react-konva";
+import { Stage, Layer, Rect, Text, Group  } from "react-konva";
 import { useEffect, useState } from "react";
 
 export default function Canvas() {
@@ -18,14 +18,25 @@ const [size, setSize] = useState({
   return (
     <Stage width={size.width} height={size.height} style={{ background: "white"}}>
       <Layer>
-        <Rect
-          x={50}
-          y={50}
-          width={120}
-          height={80}
-          fill="black"
-          draggable
-        />
+        <Group draggable>
+            <Rect
+            x={50}
+            y={50}
+            width={120}
+            height={80}
+            fill="#fcda68"
+            cornerRadius={5}
+            shadowBlur={4}           
+          />
+          <Text
+           x={60}
+            y={60}
+            text="first pin"
+            fontSize={16}
+            fill="black"
+            width={140}
+          />
+        </Group>
       </Layer>
     </Stage>
   );
