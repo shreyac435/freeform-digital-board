@@ -12,6 +12,7 @@ const [history, setHistory] = useState<any[][]>([]);
 const [future, setFuture] = useState<any[][]>([]);
 const [pinColor, setPinColor] = useState("#fcda68");
 const [pins, setPins] = useState<any[]>([]);
+const [selectedPins, setSelectedPins] = useState<number[]>([]); 
 
 
   useEffect(() => {
@@ -85,7 +86,6 @@ function undo() {
     setPins(previous);
   }
 
-  // 🔴 ADD: redo function
   function redo() {
     if (future.length === 0) return;
 
