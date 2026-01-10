@@ -10,6 +10,15 @@ const [size, setSize] = useState({
   });
 
 const [pinColor, setPinColor] = useState("#fcda68");
+const [pins, setPins] = useState([
+    {
+      id: 1,
+      x: 50,
+      y: 50,
+      color: "#fcda68",
+      text: "first pin",
+    },
+  ]);
 
   useEffect(() => {
     setSize({
@@ -17,11 +26,30 @@ const [pinColor, setPinColor] = useState("#fcda68");
       height: window.innerHeight,
     });
   }, []);
+
+  function addPin() {
+    setPins([
+      ...pins,
+      {
+        id: Date.now(),
+        x: 100,
+        y: 100,
+        color: pinColor,
+        text: "New pin",
+      },
+    ]);
+  }
+
   return (
     <>
       {/* Top controls */}
       <div style={{ padding: "8px", background: "#f0f0f0" }}>
-        <label style={{ marginRight: "8px" }}>Pin color:</label>
+        <button
+    onClick={addPin}
+    style={{ marginRight: "12px", color:"black" }}
+  >Add Pin
+  </button>
+        <label style={{ marginRight: "7px", color:"black" }}>Pin colour:</label>
         <input
           type="color"
           value={pinColor}
@@ -30,27 +58,31 @@ const [pinColor, setPinColor] = useState("#fcda68");
       </div>
 
       {/* Board */}
-    <Stage width={size.width} height={size.height} style={{ background: "white"}}>
+    <Stage width={size.width} 
+    height={size.height-50} 
+    style={{ background: "white"}}>
       <Layer>
-        <Group draggable>
+        {pins.map((pin) => (
+        <Group key={pin.id} draggable>
             <Rect
-            x={50}
-            y={50}
+            x={pin.x}
+            y={pin.y}
             width={120}
             height={80}
-            fill={pinColor}
+            fill={pin.color}
             cornerRadius={5}
             shadowBlur={4}           
           />
           <Text
-            x={60}
-            y={60}
-            text="first pin"
+            x={pin.x+10}
+            y={pin.y+10}
+            text={pin.text}
             fontSize={16}
             fill="black"
             width={140}
           />
         </Group>
+        ))}
       </Layer>
     </Stage>
     </>
