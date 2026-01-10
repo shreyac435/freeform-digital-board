@@ -10,22 +10,32 @@ const [size, setSize] = useState({
   });
 
 const [pinColor, setPinColor] = useState("#fcda68");
-const [pins, setPins] = useState([
-    {
-      id: 1,
-      x: 50,
-      y: 50,
-      color: "#fcda68",
-      text: "first pin",
-    },
-  ]);
+const [pins, setPins] = useState<any[]>([]);
+
 
   useEffect(() => {
     setSize({
       width: window.innerWidth,
       height: window.innerHeight,
     });
+    const savedPins = localStorage.getItem("pins");
+  if (savedPins) {
+    setPins(JSON.parse(savedPins));
+  } else {
+    setPins([
+      {
+        id: 1,
+        x: 50,
+        y: 50,
+        color: "#fcda68",
+        text: "first pin",
+      },
+    ]);
+  }
   }, []);
+  useEffect(() => {
+    localStorage.setItem("pins", JSON.stringify(pins));
+  }, [pins]);
 
   function addPin() {
     setPins([
@@ -48,6 +58,13 @@ const [pins, setPins] = useState([
   setPins(
     pins.map((pin) =>
       pin.id === id ? { ...pin, text: newText } : pin
+    )
+  );
+}
+ function updatePinPosition(id: number, x: number, y: number) {
+  setPins(
+    pins.map((pin) =>
+      pin.id === id ? { ...pin, x, y } : pin
     )
   );
 }
@@ -75,12 +92,22 @@ const [pins, setPins] = useState([
     style={{ background: "white"}}>
       <Layer>
         {pins.map((pin) => (
-        <Group key={pin.id} draggable
+        <Group key={pin.id} 
+        x={pin.x}
+        y={pin.y}
+        draggable
         onDblClick={() => editPinText(pin.id)}
+        onDragEnd={(e) =>
+        updatePinPosition(
+        pin.id,
+        e.target.x(),
+        e.target.y()
+    )
+  }
         >
             <Rect
-            x={pin.x}
-            y={pin.y}
+            x={0}
+            y={0}
             width={120}
             height={80}
             fill={pin.color}
@@ -88,8 +115,8 @@ const [pins, setPins] = useState([
             shadowBlur={4}           
           />
           <Text
-            x={pin.x+10}
-            y={pin.y+10}
+            x={10}
+            y={10}
             text={pin.text}
             fontSize={16}
             fill="black"
