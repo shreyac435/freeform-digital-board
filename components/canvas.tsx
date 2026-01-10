@@ -71,10 +71,20 @@ const [selectedPins, setSelectedPins] = useState<number[]>([]);
 }
  function updatePinPosition(id: number, x: number, y: number) {
     saveToHistory(pins);
+  const movedPin = pins.find((p) => p.id === id);
+  if (!movedPin) return;
+
   setPins(
-    pins.map((pin) =>
-      pin.id === id ? { ...pin, x, y } : pin
-    )
+    pins.map((pin) => {
+      if (pin.groupId && pin.groupId === movedPin.groupId) {
+        return {
+          ...pin,
+          x: pin.x + (x - movedPin.x),
+          y: pin.y + (y - movedPin.y),
+        };
+      }
+      return pin.id === id ? { ...pin, x, y } : pin;
+    })
   );
 }
 function undo() {
@@ -94,6 +104,24 @@ function undo() {
     setHistory([...history, pins]);
     setPins(next);
   }
+  function groupSelectedPins() {
+  if (selectedPins.length < 2) return;
+
+  saveToHistory(pins); // keeps undo working
+
+  const newGroupId = Date.now();
+
+  setPins(
+    pins.map((pin) =>
+      selectedPins.includes(pin.id)
+        ? { ...pin, groupId: newGroupId }
+        : pin
+    )
+  );
+
+  setSelectedPins([]);
+}
+
   return (
     <>
       {/* Top controls */}
@@ -101,14 +129,21 @@ function undo() {
     <button
     onClick={addPin}
     style={{ marginRight: "12px", color:"black" }}
-  >Add Pin
-  </button>
+    >Add Pin
+    </button>
         <label style={{ marginRight: "10px", color:"black" }}> Pin colour:</label>
         <input
           type="color"
           value={pinColor}
           onChange={(e) => setPinColor(e.target.value)}
         />
+    <button
+     onClick={groupSelectedPins}
+     style={{ marginRight: "12px", color: "black" }}
+    >
+    Group
+    </button>
+
     <button onClick={undo} style={{ marginRight: "8px", marginLeft:"30px", color: "black" }}>
           Undo
         </button>
@@ -128,6 +163,15 @@ function undo() {
         y={pin.y}
         draggable
         onDblClick={() => editPinText(pin.id)}
+        onClick={(e) => {                 
+    if (e.evt.shiftKey) {
+      setSelectedPins((prev) =>
+        prev.includes(pin.id)
+          ? prev.filter((id) => id !== pin.id)
+          : [...prev, pin.id]
+      );
+    }
+  }}
         onDragEnd={(e) =>
         updatePinPosition(
         pin.id,
@@ -143,7 +187,9 @@ function undo() {
             height={80}
             fill={pin.color}
             cornerRadius={5}
-            shadowBlur={4}           
+            shadowBlur={4}  
+             stroke={selectedPins.includes(pin.id) ? "black" : undefined} 
+  strokeWidth={selectedPins.includes(pin.id) ? 2 : 0}         
           />
           <Text
             x={10}
