@@ -40,6 +40,18 @@ const [pins, setPins] = useState([
     ]);
   }
 
+  function editPinText(id: number) {
+  const newText = prompt("Edit pin text:");
+
+  if (!newText) return;
+
+  setPins(
+    pins.map((pin) =>
+      pin.id === id ? { ...pin, text: newText } : pin
+    )
+  );
+}
+
   return (
     <>
       {/* Top controls */}
@@ -63,7 +75,9 @@ const [pins, setPins] = useState([
     style={{ background: "white"}}>
       <Layer>
         {pins.map((pin) => (
-        <Group key={pin.id} draggable>
+        <Group key={pin.id} draggable
+        onDblClick={() => editPinText(pin.id)}
+        >
             <Rect
             x={pin.x}
             y={pin.y}
