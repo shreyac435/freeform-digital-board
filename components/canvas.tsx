@@ -121,6 +121,22 @@ function undo() {
 
   setSelectedPins([]);
 }
+function ungroupSelectedPins() {
+  if (selectedPins.length === 0) return;
+
+  saveToHistory(pins);
+
+  setPins(
+    pins.map((pin) =>
+      selectedPins.includes(pin.id)
+        ? { ...pin, groupId: undefined }
+        : pin
+    )
+  );
+
+  setSelectedPins([]);
+}
+
 
   return (
     <>
@@ -210,6 +226,20 @@ function undo() {
     >
     Group
     </button>
+<button
+  onClick={ungroupSelectedPins}
+  style={{
+    padding: "8px",
+    borderRadius: "6px",
+    border: "1px solid #7C83FD",
+    background: "white",
+    color: "#7C83FD",
+    cursor: "pointer",
+    textAlign: "center",
+  }}
+>
+  Ungroup
+</button>
 
     <button onClick={undo} style={{ padding: "8px",
     borderRadius: "6px",
@@ -233,7 +263,7 @@ function undo() {
       </div>
 
       {/* Board */}
-    <Stage width={size.width-180} 
+    <Stage width={size.width} 
     height={size.height-50} 
     style={{ background: "#fcfcfc"}}>
       <Layer>
