@@ -136,6 +136,14 @@ function ungroupSelectedPins() {
 
   setSelectedPins([]);
 }
+function deleteSelectedPins() {
+  if (selectedPins.length === 0) return;
+
+  saveToHistory(pins);
+
+  setPins(pins.filter((pin) => !selectedPins.includes(pin.id)));
+  setSelectedPins([]);
+}
 
 
   return (
@@ -215,12 +223,13 @@ function ungroupSelectedPins() {
 
     <button
      onClick={groupSelectedPins}
+     disabled={selectedPins.length < 2}
      style={{ padding: "8px",
     borderRadius: "6px",
     border: "1px solid #4f7cc4",
-    background: "white",
+    background: selectedPins.length < 2 ? "#f2f2f2" : "white",
     color: "#4f7cc4",
-    cursor: "pointer",
+    cursor: selectedPins.length < 2 ? "not-allowed" : "pointer",
     textAlign: "center",
   }}
     >
@@ -231,10 +240,10 @@ function ungroupSelectedPins() {
   style={{
     padding: "8px",
     borderRadius: "6px",
-    border: "1px solid #7C83FD",
-    background: "white",
-    color: "#7C83FD",
-    cursor: "pointer",
+    border: "1px solid #4f7cc4",
+    background: selectedPins.length === 0 ? "#f2f2f2" : "white",
+    color: "#4f7cc4",
+    cursor: selectedPins.length === 0 ? "not-allowed" : "pointer",
     textAlign: "center",
   }}
 >
@@ -260,6 +269,22 @@ function ungroupSelectedPins() {
   }}>
           Redo
         </button>
+    <button
+  onClick={deleteSelectedPins}
+  disabled={selectedPins.length === 0}
+  style={{
+    padding: "8px",
+    borderRadius: "6px",
+    border: "1px solid #4f7cc4",
+    background: selectedPins.length === 0 ? "#f2f2f2" : "white",
+    color: "#4f7cc4",
+    cursor: selectedPins.length === 0 ? "not-allowed" : "pointer",
+    textAlign: "center",
+  }}
+>
+  Delete
+</button>
+
       </div>
 
       {/* Board */}
@@ -273,16 +298,16 @@ function ungroupSelectedPins() {
         y={pin.y}
         draggable
         onDblClick={() => editPinText(pin.id)}
+
         onClick={(e) => {
-  if (e.evt.shiftKey) {
-    setSelectedPins((prev) =>
-      prev.includes(pin.id)
+        setSelectedPins((prev) => {
+        if (e.evt.shiftKey) {
+        return prev.includes(pin.id)
         ? prev.filter((id) => id !== pin.id)
         : [...prev, pin.id]
-    );
-  } else {
-    setSelectedPins([pin.id]);
-  }
+    } 
+  return prev.includes(pin.id) ? [] : [pin.id];
+  });
 }}
 
         onDragEnd={(e) =>
