@@ -273,15 +273,18 @@ function ungroupSelectedPins() {
         y={pin.y}
         draggable
         onDblClick={() => editPinText(pin.id)}
-        onClick={(e) => {                 
-    if (e.evt.shiftKey) {
-      setSelectedPins((prev) =>
-        prev.includes(pin.id)
-          ? prev.filter((id) => id !== pin.id)
-          : [...prev, pin.id]
-      );
-    }
-  }}
+        onClick={(e) => {
+  if (e.evt.shiftKey) {
+    setSelectedPins((prev) =>
+      prev.includes(pin.id)
+        ? prev.filter((id) => id !== pin.id)
+        : [...prev, pin.id]
+    );
+  } else {
+    setSelectedPins([pin.id]);
+  }
+}}
+
         onDragEnd={(e) =>
         updatePinPosition(
         pin.id,
