@@ -234,7 +234,7 @@ function addImagePin(file: File) {
   style={{
     padding: "8px",
     borderRadius: "6px",
-    border: "1px solid ##4f7cc4",
+    border: "1px solid #4f7cc4",
     background: "white",
     color: "#4f7cc4",
     cursor: "pointer",
@@ -298,8 +298,8 @@ function addImagePin(file: File) {
     Group
     </button>
 <button
-  onClick={ungroupSelectedPins}
-  style={{
+   onClick={ungroupSelectedPins}
+   style={{
     padding: "8px",
     borderRadius: "6px",
     border: "1px solid #4f7cc4",
@@ -359,6 +359,18 @@ function addImagePin(file: File) {
         x={pin.x}
         y={pin.y}
         draggable
+        onMouseEnter={(e) => {
+        const container = e.target.getStage()?.container();
+        if (container) container.style.cursor = "grab";
+        }}
+        onMouseDown={(e) => {
+        const container = e.target.getStage()?.container();
+        if (container) container.style.cursor = "grabbing";
+        }}
+        onMouseLeave={(e) => {
+        const container = e.target.getStage()?.container();
+        if (container) container.style.cursor = "default";
+        }}
         onDblClick={() => editPinText(pin.id)}
 
         onClick={(e) => {
@@ -380,7 +392,8 @@ function addImagePin(file: File) {
     )
   }
         >
-          {pin.imageSrc && images[pin.id] ? (
+    {pin.imageSrc && images[pin.id] ? (
+
     <Image
       image={images[pin.id]}
       width={pin.width}
@@ -389,14 +402,19 @@ function addImagePin(file: File) {
   ) : (
     <>
       <Rect
+        x={0}
+        y={0}
         width={120}
         height={80}
         fill={pin.color}
         cornerRadius={5}
-        shadowBlur={4}
-        stroke={selectedPins.includes(pin.id) ? "black" : undefined}
-        strokeWidth={selectedPins.includes(pin.id) ? 2 : 0}
-      />
+        shadowBlur={selectedPins.includes(pin.id) ? 12 : 4}
+  shadowColor={
+    selectedPins.includes(pin.id) ? "#6373a3ff" : "rgba(0,0,0,0.25)"
+  }
+  stroke={selectedPins.includes(pin.id) ? "#4a4a4eff" : undefined}
+  strokeWidth={selectedPins.includes(pin.id) ? 2 : 0}
+/>
       <Text
         x={10}
         y={10}
@@ -404,6 +422,14 @@ function addImagePin(file: File) {
         fontSize={16}
         fill="black"
         width={140}
+        onMouseEnter={(e) => {
+    const container = e.target.getStage()?.container();
+    if (container) container.style.cursor = "text";
+  }}
+  onMouseLeave={(e) => {
+    const container = e.target.getStage()?.container();
+    if (container) container.style.cursor = "default";
+  }}
       />
     </>
   )}
