@@ -1,6 +1,6 @@
 "use client";
 
-import { Stage, Layer, Rect, Text, Group  } from "react-konva";
+import { Stage, Layer, Rect, Text, Group,Image  } from "react-konva";
 import { useEffect, useState } from "react";
 
 export default function Canvas() {
@@ -13,6 +13,7 @@ const [future, setFuture] = useState<any[][]>([]);
 const [pinColor, setPinColor] = useState("#fcda68");
 const [pins, setPins] = useState<any[]>([]);
 const [selectedPins, setSelectedPins] = useState<number[]>([]); 
+const [images, setImages] = useState<{ [key: number]: HTMLImageElement }>({});
 
 
   useEffect(() => {
@@ -38,6 +39,22 @@ const [selectedPins, setSelectedPins] = useState<number[]>([]);
   useEffect(() => {
     localStorage.setItem("pins", JSON.stringify(pins));
   }, [pins]);
+
+  useEffect(() => {
+  pins.forEach((pin) => {
+    if (pin.imageSrc && !images[pin.id]) {
+      const img = new window.Image();
+      img.src = pin.imageSrc;
+
+      img.onload = () => {
+        setImages((prev) => ({
+          ...prev,
+          [pin.id]: img,
+        }));
+      };
+    }
+  });
+}, [pins, images]);
 
   function saveToHistory(currentPins: any[]) {
     setHistory([...history, currentPins]);
@@ -144,6 +161,27 @@ function deleteSelectedPins() {
   setPins(pins.filter((pin) => !selectedPins.includes(pin.id)));
   setSelectedPins([]);
 }
+function addImagePin(file: File) {
+  const reader = new FileReader();
+
+  reader.onload = () => {
+    saveToHistory(pins);
+
+    setPins([
+      ...pins,
+      {
+        id: Date.now(),
+        x: 100,
+        y: 100,
+        imageSrc: reader.result,
+        width: 150,
+        height: 150,
+      },
+    ]);
+  };
+
+  reader.readAsDataURL(file);
+}
 
 
   return (
@@ -192,6 +230,30 @@ function deleteSelectedPins() {
   }}
     >Add Pin
     </button>
+    <label
+  style={{
+    padding: "8px",
+    borderRadius: "6px",
+    border: "1px solid ##4f7cc4",
+    background: "white",
+    color: "#4f7cc4",
+    cursor: "pointer",
+    textAlign: "center",
+  }}
+>
+  Add Image
+  <input
+    type="file"
+    accept="image/*"
+    hidden
+    onChange={(e) => {
+      if (e.target.files?.[0]) {
+        addImagePin(e.target.files[0]);
+      }
+    }}
+  />
+</label>
+
         <div
   style={{
     padding: "8px",
@@ -270,9 +332,9 @@ function deleteSelectedPins() {
           Redo
         </button>
     <button
-  onClick={deleteSelectedPins}
-  disabled={selectedPins.length === 0}
-  style={{
+    onClick={deleteSelectedPins}
+    disabled={selectedPins.length === 0}
+    style={{
     padding: "8px",
     borderRadius: "6px",
     border: "1px solid #4f7cc4",
@@ -318,25 +380,33 @@ function deleteSelectedPins() {
     )
   }
         >
-            <Rect
-            x={0}
-            y={0}
-            width={120}
-            height={80}
-            fill={pin.color}
-            cornerRadius={5}
-            shadowBlur={4}  
-             stroke={selectedPins.includes(pin.id) ? "black" : undefined} 
-  strokeWidth={selectedPins.includes(pin.id) ? 2 : 0}         
-          />
-          <Text
-            x={10}
-            y={10}
-            text={pin.text}
-            fontSize={16}
-            fill="black"
-            width={140}
-          />
+          {pin.imageSrc && images[pin.id] ? (
+    <Image
+      image={images[pin.id]}
+      width={pin.width}
+      height={pin.height}
+    />
+  ) : (
+    <>
+      <Rect
+        width={120}
+        height={80}
+        fill={pin.color}
+        cornerRadius={5}
+        shadowBlur={4}
+        stroke={selectedPins.includes(pin.id) ? "black" : undefined}
+        strokeWidth={selectedPins.includes(pin.id) ? 2 : 0}
+      />
+      <Text
+        x={10}
+        y={10}
+        text={pin.text}
+        fontSize={16}
+        fill="black"
+        width={140}
+      />
+    </>
+  )}
         </Group>
         ))}
       </Layer>
