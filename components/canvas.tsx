@@ -421,7 +421,7 @@ function addImagePin(file: File) {
         text={pin.text}
         fontSize={16}
         fill="black"
-        width={140}
+        width={100}
         onMouseEnter={(e) => {
     const container = e.target.getStage()?.container();
     if (container) container.style.cursor = "text";
